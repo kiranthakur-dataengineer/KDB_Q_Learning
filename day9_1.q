@@ -1,11 +1,22 @@
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ mkdir seghdb
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ mkdir segs
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ cd segs
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ mkdir seg1
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ mkdir seg2
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ mkdir seg3
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ mkdir seg4
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ ll
+/Memory Mapped
+/Date-Partitioned splayed database
+/Clusters of storage
+/ Segmented Database - Data is stored in clusterd format
+/ HDB server --> HDB Root Dir --> par.txt & sym file
+par.txt - will contains all segments. So data is stored in clustered format in memory, that memory mounted location sre stored 
+/ We can # of segments but normally it's 5 segments
+/and store data in Round Robbin fashion
+
+/// jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__ --> >> ../
+
+>> ..//training$ mkdir seghdb
+>> ..//training$ mkdir segs
+>> ..//training$ cd segs
+>> ..//training$/segs$ mkdir seg1
+>> ..//training$/segs$ mkdir seg2
+>> ..//training$/segs$ mkdir seg3
+>> ..//training$/segs$ mkdir seg4
+>> ..//training$/segs$ ll
 total 24
 drwxr-sr-x 6 jovyan users 4096 Oct  1 05:12 .
 drwxrwsr-x 9 jovyan users 4096 Oct  1 05:12 ..
@@ -13,42 +24,42 @@ drwxr-sr-x 2 jovyan users 4096 Oct  1 05:12 seg1
 drwxr-sr-x 2 jovyan users 4096 Oct  1 05:12 seg2
 drwxr-sr-x 2 jovyan users 4096 Oct  1 05:12 seg3
 drwxr-sr-x 2 jovyan users 4096 Oct  1 05:12 seg4
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ cd ..
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ cd seghdb/
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/seghdb$ ll
+>> ..//training$/segs$ cd ..
+>> ..//training$$ cd seghdb/
+>> ..//training$/seghdb$ ll
 total 8
 drwxr-sr-x 2 jovyan users 4096 Oct  1 05:12 .
 drwxrwsr-x 9 jovyan users 4096 Oct  1 05:12 ..
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/seghdb$ pwd
+>> ..//training$/seghdb$ pwd
 /home/jovyan/developer/workspace/__nouser__/training/seghdb
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/seghdb$ cat > par.txt
+>> ..//training$/seghdb$ cat > par.txt
 /home/jovyan/developer/workspace/__nouser__/training/segs/seg1 
 /home/jovyan/developer/workspace/__nouser__/training/segs/seg2
 /home/jovyan/developer/workspace/__nouser__/training/segs/seg3
 /home/jovyan/developer/workspace/__nouser__/training/segs/seg4
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/seghdb$ ll
+>> ..//training$/seghdb$ ll
 total 12
 drwxr-sr-x 2 jovyan users 4096 Oct  1 05:13 .
 drwxrwsr-x 9 jovyan users 4096 Oct  1 05:12 ..
 -rw-r--r-- 1 jovyan users  252 Oct  1 05:14 par.txt
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/seghdb$ ll
+>> ..//training$/seghdb$ ll
 total 16
 drwxr-sr-x 2 jovyan users 4096 Oct  1 05:15 .
 drwxrwsr-x 9 jovyan users 4096 Oct  1 05:12 ..
 -rw-r--r-- 1 jovyan users  252 Oct  1 05:14 par.txt
 -rw-r--r-- 1 jovyan users   54 Oct  1 05:15 sym
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/seghdb$ cd ..
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ ll segs/seg3/
+>> ..//training$/seghdb$ cd ..
+>> ..//training$$ ll segs/seg3/
 total 12
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:15 .
 drwxr-sr-x 6 jovyan users 4096 Oct  1 05:12 ..
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:15 2026.10.01
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ ll segs/seg3/2026.10.01/
+>> ..//training$$ ll segs/seg3/2026.10.01/
 total 12
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:15 .
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:15 ..
 drwxr-sr-x 2 jovyan users 4096 Oct  1 05:15 trades
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ ll segs/seg3/2026.10.01/trades/
+>> ..//training$$ ll segs/seg3/2026.10.01/trades/
 total 4336
 drwxr-sr-x 2 jovyan users   4096 Oct  1 05:15 .
 drwxr-sr-x 3 jovyan users   4096 Oct  1 05:15 ..
@@ -59,17 +70,17 @@ drwxr-sr-x 3 jovyan users   4096 Oct  1 05:15 ..
 -rw-r--r-- 1 jovyan users 400016 Oct  1 05:15 size
 -rw-r--r-- 1 jovyan users 804400 Oct  1 05:15 sym
 -rw-r--r-- 1 jovyan users 800016 Oct  1 05:15 time
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ cd seghdb/
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/seghdb$ q .
+>> ..//training$$ cd seghdb/
+>> ..//training$/seghdb$ q .
 KDB-X 5.0 2026.05.01 Copyright (C) 1993-2026 Kx Systems
 l64/ 8()core 64307MB jovyan jupyter-kdbguru-40gmail-2ecom 10.33.243.192 EXPIRE 2027.01.19    localkod 00000000-0000-0000-0000-000000000000
 
 q).Q.PV
 2026.09.30 2026.10.01
 q)\\
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/seghdb$ cd ..
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ cd segs
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ ll
+>> ..//training$/seghdb$ cd ..
+>> ..//training$$ cd segs
+>> ..//training$/segs$ ll
 total 24
 drwxr-sr-x 6 jovyan users 4096 Oct  1 05:12 .
 drwxrwsr-x 9 jovyan users 4096 Oct  1 05:12 ..
@@ -77,20 +88,20 @@ drwxr-sr-x 2 jovyan users 4096 Oct  1 05:12 seg1
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:24 seg2
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:15 seg3
 drwxr-sr-x 2 jovyan users 4096 Oct  1 05:12 seg4
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ ll seg2/
+>> ..//training$/segs$ ll seg2/
 total 12
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:24 .
 drwxr-sr-x 6 jovyan users 4096 Oct  1 05:12 ..
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:24 2026.09.30
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ 
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ 
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ 
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ ll seg2/2026.09.30/
+>> ..//training$/segs$ 
+>> ..//training$/segs$ 
+>> ..//training$/segs$ 
+>> ..//training$/segs$ ll seg2/2026.09.30/
 total 12
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:24 .
 drwxr-sr-x 3 jovyan users 4096 Oct  1 05:24 ..
 drwxr-sr-x 2 jovyan users 4096 Oct  1 06:04 trades
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ ll seg2/2026.09.30/trades/
+>> ..//training$/segs$ ll seg2/2026.09.30/trades/
 total 5120
 drwxr-sr-x 2 jovyan users   4096 Oct  1 06:04 .
 drwxr-sr-x 3 jovyan users   4096 Oct  1 05:24 ..
@@ -102,9 +113,9 @@ drwxr-sr-x 3 jovyan users   4096 Oct  1 05:24 ..
 -rw-r--r-- 1 jovyan users 804400 Oct  1 05:24 sym
 -rw-r--r-- 1 jovyan users 800016 Oct  1 05:24 time
 -rw-r--r-- 1 jovyan users 800016 Oct  1 06:04 tradecost
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/segs$ cd ..
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training$ cd seghdb/
-jovyan@jupyter-kdbguru-40gmail-2ecom:~/developer/workspace/__nouser__/training/seghdb$ q .
+>> ..//training$/segs$ cd ..
+>> ..//training$$ cd seghdb/
+>> ..//training$/seghdb$ q .
 KDB-X 5.0 2026.05.01 Copyright (C) 1993-2026 Kx Systems
 l64/ 8()core 64307MB jovyan jupyter-kdbguru-40gmail-2ecom 10.33.243.192 EXPIRE 2027.01.19    localkod 00000000-0000-0000-0000-000000000000
 
