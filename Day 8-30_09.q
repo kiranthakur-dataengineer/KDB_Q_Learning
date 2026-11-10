@@ -1,159 +1,226 @@
-/I/O operations
-/Tables & Queries
-/ Generating Sample Data for trade table
-n:100000 / Number of rows.
-// Start and end times for the day (e.g., 9 AM to 3 PM).
+/==========================================================
+/ I/O operations in Q/KDB+ and historical database (HDB) basics
+/ This script demonstrates:
+/
+/ - creating tables
+/ - saving/loading data in binary and text formats
+/ - reading/writing CSV/JSON
+/ - splayed tables and partitioned HDB structures
+/ - loading historical data for symbol-based partitioning
+/==========================================================
+
+/------------------------------------------
+/ Create sample data
+/------------------------------------------
+
+/ Number of rows in the trade table
+n:100000
+
+/ Use previous trading day as the time window
 st:(.z.d-1)+09:00:00
 et:(.z.d-1)+15:00:00
 
-/tm - Random times between start and end times.
+/ Generate random timestamps between start and end
 tm:st+asc n?`long$et-st
 tm:st+n?`long$et-st
-st+21600000000000 //
--10#tm / For fetch last 10 records
 
-// sym - Random symbols like AAPL, GOOG, etc. representing stocks.
+/ Example timestamp
+st+21600000000000
+
+/ Display first 10 timestamps
+-10#tm
+
+/ Random stock symbols
 sym:n?`AAPL`DELL`GOOG`IBM`META`MSFT`NVDA
 
-// px - Price values.
-// size - Trade size.
-// side - Buy (B) or Sell (S) indicator.
-// exch - Exchange codes like O, L, N, Q.
-
+/ Random prices and sizes
 px:n?100f
 size:n?10000i
+
+/ Random side values: B = Buy, S = Sell
 side:n?`B`S
+
+/ Random exchange codes
 exch:n?`O`L`N`Q
 
-/create Table
+/ Create a trade table
 trades:([] time:tm;sym:sym;exch:exch;side:side;price:px;size:size)
 
-/ Generating Sample Data for quote table
+/------------------------------------------
+/ Create quote data
+/------------------------------------------
+
+/ More rows for a quote table
 nq:10000000
+
 st:(.z.d-1)+09:00:00
 et:(.z.d-1)+15:00:00
+
 tm:st+asc nq?`long$et-st
 tm:st+n?`long$et-st
+
 st+21600000000000
 -10#tm
+
 sym:nq?`AAPL`DELL`GOOG`IBM`META`MSFT`NVDA
 bprice:nq?100f
 bsize:nq?10000i
 aprice:nq?100f
 asize:nq?10000i
+
+/ Create a quote table
+/ Bid and ask prices are captured separately
 trades:([] time:tm;sym:sym;exch:exch;side:side;price:px;size:size)
 quotes:([] time:tm;sym:sym;bprice:bprice;bsize:bsize;aprice:aprice;asize:asize)
 
-/Check row counts
+/------------------------------------------
+/ Count rows
+/------------------------------------------
+
 count trades
 count quotes
 
-// Saving Tables in Binary Format
+/------------------------------------------
+/ Save a table to a q binary file
+/------------------------------------------
+
+/ `save` writes the object to disk in q binary format
 save `:trades
 
-\pwd / current working directory
-\ls  / list files in current working directory
-delete trades from `. / Remove table from memory
-\a  / Show Current Namespace
-\l trades / Show Current Namespace
+/ Show current working directory and files
+\pwd
+\ls
 
-// Exporting to CSV
-save `:trades.csv / Save in CSV
+/ "Display data types and attributes of all symbols in namespace" for debugging
+\a
 
-// Reading csv
-/ Read Using Explicit Types
+/ Load a saved table from disk
+\l trades
+
+/------------------------------------------
+/ Save as CSV
+/------------------------------------------
+
+/ Save the trade table to a CSV file
+save `:trades.csv
+
+/ Read CSV back using q's text loader
+/ The format string ("PSSSFI";enlist",") means:
+/
+/ - P = timestamp
+/ - S = symbol
+/ - S = exchange
+/ - S = side
+/ - F = float
+/ - I = integer
+/
+/ `0:` is the q file read operator
 trades:("PSSSFI";enlist",") 0: `:trades.csv
-/ Read Everything as Strings
+
+/ Different file format / alternative loading
 trades:(6#"*";enlist",") 0: `:trades.csv
-/ In case csv don't have column name, then data is present in row format, So Column name  is a key and data store in row. To cconvert that into column we have to perform flip
-trades:flip `time`sym`exch`side`price`size!("PSSSFI";",") 0: `:trades.csv / 0: is the read operator, (P=Timestamp, S=Symbol, F=Float, I=Integer).
 
-// Read File as Text
+/ Explicit schema mapping
+trades:flip `time`sym`exch`side`price`size!("PSSSFI";",") 0: `:trades.csv
+
+/ Read raw file lines
 read0 `:trades.csv
-/trades_20260930.csv
-/set
-trades
 
-// Export To Delimited Files
-(`:trades_20260930.csv) 0: "," 0: trades  / Creates comma-separated file.
-(`:trades_20260930.txt) 0: "\t" 0: trades / Creates TAB-separated file.
+/------------------------------------------
+/ Write data to text and JSON files
+/------------------------------------------
+
+/ Save table as CSV with a custom filename
+(`:trades_20260930.csv) 0: "," 0: trades
+
+/ Save table as tab-delimited text
 (`:trades_20260930.txt) 0: "\t" 0: trades
 
-// JSON Operations
-/  Export JSON
-`:trades_20260930.json 0: enlist .j.j trades / Convert JSON to table format using .j.j for parsing
+/ Save table as JSON
+/ `.j.j` converts the table to a JSON string
+`:trades_20260930.json 0: enlist .j.j trades
+
+/ Read JSON back using `.j.k`
+/ This deserializes JSON into q objects
 update "P"$time, "S"$sym, "S"$exch, "S"$side from .j.k raze read0 `:trades_20260930.json
-/Splayed table
+
+/------------------------------------------
+/ Splayed tables
+/------------------------------------------
+
+/ A splayed table is stored as separate column files in a directory
 tab:([] c1:1000?100i;c2:1000?100f;c3:1000?.z.P)
+
+/ Save as a splayed table
 `:unsplayed_tab set tab
+
+/ A directory name ending with "/" indicates a splayed table
 `:tab/ set tab
+
+/ Access files inside the splayed directory
 -10#get `:tab/c1
 get `:tab/c3
 get `:tab/.d
-/ \l - load the data which is in q binary format 
-/We can't spaly a table with a symbol data type
+
+/------------------------------------------
+/ Encrypt/compress or encode data
+/------------------------------------------
+
+/ `\l` loads q binary data from a file (not necessarily text)
+/ Usually used for q database tables and objects
+/ "We can't splay a table with a symbol data type" is a reminder:
+/
+/ - Symbol columns are often stored separately
+/ - Some data structures are not directly splayable in the same way
+/------------------------------------------
+
+/ `\Q.en` is used to encode data for encryption/compression style table storage
+/ This is often used with EOD/HDB storage patterns
 .Q.en[`:.;trades]
+
+/ Save encoded data into a directory structure
 `:trades/ set .Q.en[`:.;trades]
 
+/------------------------------------------
+/ Historical Database (HDB) structure
+/------------------------------------------
 
-////// A structure to organize data over multiple days and symbols:
+/ HDB organizes data by date and symbol
+/ Example tree structure:
+/ -----HDB Root/
+/ --------sym
+/ --------2026.09.30/
+/ ------------trades/
+/ ----------------.d
+/ ----------------time
+/ ----------------sym
+/ ----------------exch
+/ ------------quotes/
+/ ----------------.d
+/ ----------------time
+/ ----------------sym
+/ ----------------bprice
+/ ----------------bsize
+/ --------2026.09.29/
+/ ------------trades/
+/ ----------------.d
+/ ----------------time
+/ ----------------sym
+/ ----------------exch
+/ ------------quotes/
+/ ----------------.d
+/ ----------------time
+/ ----------------sym
+/ ----------------bprice
+/ ----------------bsize
+/
+/ This is a standard partitioned historical database layout in KDB+.
 
-/Historical Database (HDB)
-/Structure
-/-----HDB Root/
-/--------sym
-/--------2026.09.30/
-/------------trades/
-/----------------.d
-/----------------time
-/----------------sym
-/----------------exch
-/------------quotes/
-/----------------.d
-/----------------time
-/----------------sym
-/----------------bprice
-/----------------bsize
-/--------2026.09.29/
-/------------trades/
-/----------------.d
-/----------------time
-/----------------sym
-/----------------exch
-/------------quotes/
-/----------------.d
-/----------------time
-/----------------sym
-/----------------bprice
-/----------------bsize
-/--------2026.09.28/
-/------------trades/
-/----------------.d
-/----------------time
-/----------------sym
-/----------------exch
-/------------quotes/
-/----------------.d
-/----------------time
-/----------------sym
-/----------------bprice
-/----------------bsize
-/--------2026.09.25/
-/------------trades/
-/----------------.d
-/----------------time
-/----------------sym
-/----------------exch
-/------------quotes/
-/----------------.d
-/----------------time
-/----------------sym
-/----------------bprice
-/----------------bsize
+/
+/ `dpft` creates a partitioned table and writes data for a date,
+/ with `sym` as the segmented key
+/ It is commonly used to create HDB directory structures
+.Q.dpft[`:hdb;.z.d;`sym;`trades]
 
-// .Q.dpft loads partitioned data from the HDB by date and symbol.
-.Q.dpft[`:hdb;.z.d;`sym;`trades] / Loads today's trades from the hdb database, partitioned by sym.
-
-.Q.dpft[`:hdb;.z.d-1;`sym;`trades] / 
-
-
+/ Partition for previous day
+.Q.dpft[`:hdb;.z.d-1;`sym;`trades]
